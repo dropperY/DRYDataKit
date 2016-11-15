@@ -42,6 +42,10 @@ class DRYManagedObjectContext: NSManagedObjectContext {
         return instance
     }()
     
+    class func defaultContext() -> DRYManagedObjectContext {
+        return _mainContext
+    }
+    
     class func mainContext() -> DRYManagedObjectContext {
         return _mainContext
     }
