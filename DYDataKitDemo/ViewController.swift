@@ -13,8 +13,14 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("new person")
-        let p = Person()
-        p.age = 20
+        let p:Person? = Person.find(attribute:"age", with: 20)
+        print(p?.name)
+//        let p = Person()
+//        p.age = 20
+//        p.save()
+//        
+        
+        
         // Do any additional setup after loading the view, typically from a nib.
     }
 

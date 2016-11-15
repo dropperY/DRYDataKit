@@ -19,6 +19,29 @@ class DRYManagedObjectContext: NSManagedObjectContext {
         super.init(coder: aDecoder)
     }
     
+    /**
+     *  create child context
+     */
+    func createChildContext() -> DRYManagedObjectContext {
+        let type = NSManagedObjectContextConcurrencyType.privateQueueConcurrencyType
+        let instance : DRYManagedObjectContext  = DRYManagedObjectContext(concurrencyType:type)
+        instance.parent = self
+        return instance
+    }
+    
+    /**
+     *  create concurrent context with same NSPersistentStoreCoordinator
+     */
+    func createConcurrentContext() -> DRYManagedObjectContext {
+        let type = NSManagedObjectContextConcurrencyType.privateQueueConcurrencyType
+        let instance : DRYManagedObjectContext  = DRYManagedObjectContext(concurrencyType:type)
+        instance.persistentStoreCoordinator = DRYManagedObjectContext._psc
+        return instance
+    }
+    
+    /**
+     *  NSPersistentStoreCoordinator
+     */
     static let _psc : NSPersistentStoreCoordinator = {
         let psc = NSPersistentStoreCoordinator(managedObjectModel: _objectModel)
         let options = [NSMigratePersistentStoresAutomaticallyOption : true,
@@ -34,7 +57,10 @@ class DRYManagedObjectContext: NSManagedObjectContext {
         return psc
     }()
     
-    static let _mainContext: DRYManagedObjectContext = {
+    /**
+     *  _mainContext
+     */
+    static let _mainContext : DRYManagedObjectContext = {
         let type = NSManagedObjectContextConcurrencyType.mainQueueConcurrencyType
         let instance = DRYManagedObjectContext(concurrencyType:type)
         instance.persistentStoreCoordinator = _psc
@@ -42,8 +68,13 @@ class DRYManagedObjectContext: NSManagedObjectContext {
         return instance
     }()
     
-    class func defaultContext() -> DRYManagedObjectContext {
+    
+    static var _defaultContext : DRYManagedObjectContext = {
         return _mainContext
+    }()
+    
+    class func defaultContext() -> DRYManagedObjectContext {
+        return _defaultContext
     }
     
     class func mainContext() -> DRYManagedObjectContext {

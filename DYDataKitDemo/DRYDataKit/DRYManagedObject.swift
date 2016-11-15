@@ -40,11 +40,10 @@ public extension NSManagedObject {
         very useful param, required in any place
      */
     class func entity(context ctx:NSManagedObjectContext?) -> NSEntityDescription? {
-        if let context = ctx {
-            return NSEntityDescription.entity(forEntityName:self.entityName, in:context)
-        } else {
-            return NSEntityDescription.entity(forEntityName:self.entityName, in:DRYManagedObjectContext.defaultContext())
-        }
+        
+        let context = ctx ?? DRYManagedObjectContext.defaultContext()
+        return NSEntityDescription.entity(forEntityName:self.entityName, in:context)
+
     }
     
     /**
@@ -56,11 +55,8 @@ public extension NSManagedObject {
     
     class func create(Context ctx:NSManagedObjectContext?) -> Self? {
         
-        var context = ctx
-        if context == nil {
-            context = DRYManagedObjectContext.defaultContext()
-        }
-        
+        let context = ctx ?? DRYManagedObjectContext.defaultContext()
+
         return self.init(entity:entity(context:context)!, insertInto:context)
     }
     
@@ -109,10 +105,7 @@ public extension NSManagedObject {
         if let result : T = find(attribute: key, with: value, in: ctx) {
             return result
         } else {
-            var context = ctx
-            if context == nil {
-                context = DRYManagedObjectContext.defaultContext()
-            }
+            let context = ctx ?? DRYManagedObjectContext.defaultContext()
             return create(Context: context) as! T?
         }
     }
